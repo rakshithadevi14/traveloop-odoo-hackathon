@@ -43,12 +43,7 @@ export function formatTripDates(startDate, endDate) {
 export function normalizeTrip(raw) {
   const destination = raw?.destination || 'Unknown';
   const destinationImage = destinationImages[String(destination).toLowerCase()] || destinationImages.paris;
-  const inputCover = String(raw?.coverImage || raw?.coverPhotoUrl || '').trim();
-  const coverImage = inputCover
-    ? inputCover.startsWith('http://') || inputCover.startsWith('https://')
-      ? inputCover
-      : `https://${inputCover.replace(/^\/+/, '')}`
-    : destinationImage;
+  const coverImage = resolveCoverImageUrl(raw?.coverImage || raw?.coverPhotoUrl, destinationImage);
   return {
     id: raw?._id || raw?.id,
     name: raw?.name || raw?.title || 'Untitled Trip',
@@ -60,10 +55,37 @@ export function normalizeTrip(raw) {
     estimatedBudget: raw?.estimatedBudget || raw?.budget || 0,
     isPublic: Boolean(raw?.isPublic ?? raw?.is_public),
     coverImage,
+    fallbackCoverImage: destinationImage,
     status: getStatusFromTrip(raw),
     createdAt: raw?.createdAt || new Date().toISOString(),
     updatedAt: raw?.updatedAt || new Date().toISOString()
   };
+}
+
+export function resolveCoverImageUrl(input, fallback = destinationImages.paris) {
+  const raw = String(input || '').trim();
+  if (!raw) return fallback;
+
+  try {
+    const parsed = new URL(raw);
+    // Support pasted Google image-result URLs by extracting the real image URL.
+    if (parsed.hostname.includes('google.') && parsed.pathname.includes('/imgres')) {
+      const nested = parsed.searchParams.get('imgurl');
+      if (nested) {
+        return resolveCoverImageUrl(decodeURIComponent(nested), fallback);
+      }
+    }
+
+    if (parsed.protocol === 'http:' || parsed.protocol === 'https:') {
+      return parsed.toString();
+    }
+  } catch {
+    // Not a fully-qualified URL; continue with normalization.
+  }
+
+  if (raw.startsWith('//')) return `https:${raw}`;
+  if (raw.startsWith('/')) return fallback;
+  return raw.startsWith('http://') || raw.startsWith('https://') ? raw : `https://${raw.replace(/^\/+/, '')}`;
 }
 
 export function toTripPayload(form) {
@@ -73,7 +95,7 @@ export function toTripPayload(form) {
     startDate: form.startDate,
     endDate: form.endDate,
     description: form.description.trim(),
-    coverImage: form.coverImage.trim(),
+    coverImage: resolveCoverImageUrl(form.coverImage, ''),
     isPublic: form.isPublic,
     estimatedBudget: Number(form.estimatedBudget)
   };

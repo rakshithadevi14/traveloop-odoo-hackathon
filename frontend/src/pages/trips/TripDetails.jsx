@@ -78,7 +78,7 @@ export default function TripDetails() {
             alt={trip.destination}
             className='h-56 w-full object-cover'
             onError={(e) => {
-              e.currentTarget.src = 'https://images.unsplash.com/photo-1488085061387-422e29b40080?w=1200&q=80';
+              e.currentTarget.src = trip.fallbackCoverImage || 'https://images.unsplash.com/photo-1499856871958-5b9627545d1a?w=1200&q=80';
             }}
           />
           <div className='absolute inset-0 bg-gradient-to-t from-[#0F172A]/85 to-transparent' />

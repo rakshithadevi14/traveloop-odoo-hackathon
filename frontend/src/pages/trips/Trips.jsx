@@ -89,7 +89,7 @@ export default function Trips() {
                   src={trip.coverImage}
                   alt={trip.destination}
                   onError={(e) => {
-                    e.currentTarget.src = 'https://images.unsplash.com/photo-1488085061387-422e29b40080?w=800&q=80';
+                    e.currentTarget.src = trip.fallbackCoverImage || 'https://images.unsplash.com/photo-1499856871958-5b9627545d1a?w=800&q=80';
                   }}
                   style={{ width: '100%', height: '140px', objectFit: 'cover', borderRadius: '12px 12px 0 0' }}
                 />

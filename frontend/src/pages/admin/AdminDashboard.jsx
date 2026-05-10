@@ -11,6 +11,7 @@ export default function AdminDashboard() {
   const [stats, setStats] = useState({ totalUsers: 0, totalTrips: 0, tripsThisMonth: 0, tripsPerDay: [], topDestinations: [] });
   const [users, setUsers] = useState([]);
   const [trips, setTrips] = useState([]);
+  const [userQuery, setUserQuery] = useState('');
 
   useEffect(() => {
     const load = async () => {
@@ -47,6 +48,15 @@ export default function AdminDashboard() {
   if (loading) {
     return <section className='page-in rounded-2xl bg-white p-6 shadow-md'>Loading admin dashboard...</section>;
   }
+
+  const filteredUsers = users.filter((entry) => {
+    const query = userQuery.trim().toLowerCase();
+    if (!query) return true;
+    return (
+      String(entry.name || '').toLowerCase().includes(query) ||
+      String(entry.email || '').toLowerCase().includes(query)
+    );
+  });
 
   return (
     <div className='page-in space-y-5'>
@@ -107,12 +117,20 @@ export default function AdminDashboard() {
         </article>
 
         <article className='overflow-hidden rounded-2xl bg-white p-5 shadow-md'>
-          <h3 className='mb-3 font-sora text-lg font-semibold text-[#0F172A]'>Users</h3>
+          <div className='mb-3 flex items-center justify-between gap-3'>
+            <h3 className='font-sora text-lg font-semibold text-[#0F172A]'>Users</h3>
+            <input
+              className='input max-w-xs !py-2'
+              placeholder='Search user by name/email'
+              value={userQuery}
+              onChange={(e) => setUserQuery(e.target.value)}
+            />
+          </div>
           <div className='overflow-x-auto'>
             <table className='min-w-full text-sm'>
               <thead><tr className='text-left text-slate-500'><th className='pb-2'>Name</th><th className='pb-2'>Email</th><th className='pb-2'>Status</th><th className='pb-2'>Action</th></tr></thead>
               <tbody>
-                {users.map((entry) => (
+                {filteredUsers.map((entry) => (
                   <tr key={entry._id || entry.id} className='border-t border-slate-100'>
                     <td className='py-2'>{entry.name}</td>
                     <td className='py-2'>{entry.email}</td>
@@ -124,6 +142,11 @@ export default function AdminDashboard() {
                     </td>
                   </tr>
                 ))}
+                {filteredUsers.length === 0 ? (
+                  <tr>
+                    <td className='py-3 text-slate-500' colSpan={4}>No users match your search.</td>
+                  </tr>
+                ) : null}
               </tbody>
             </table>
           </div>

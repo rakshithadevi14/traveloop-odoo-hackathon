@@ -49,7 +49,7 @@ export default function TripForm({ form, setForm, onSubmit, submitting, submitLa
       {form.coverImage ? (
         <div className='overflow-hidden rounded-xl border border-slate-200'>
           <img
-            src={form.coverImage}
+            src={resolveCoverImageUrl(form.coverImage)}
             alt='Cover preview'
             style={{ width: '100%', height: '180px', objectFit: 'cover', borderRadius: '12px' }}
             onError={(e) => {
@@ -81,3 +81,4 @@ export default function TripForm({ form, setForm, onSubmit, submitting, submitLa
     </form>
   );
 }
+import { resolveCoverImageUrl } from './tripUtils.js';

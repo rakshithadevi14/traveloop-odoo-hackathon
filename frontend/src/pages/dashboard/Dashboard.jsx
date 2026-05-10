@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Search } from 'lucide-react';
 
 const heroImage = 'https://images.unsplash.com/photo-1488085061387-422e29b40080?w=1200&q=80';
 
@@ -84,6 +85,7 @@ export default function Dashboard() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [trips, setTrips] = useState([]);
+  const [query, setQuery] = useState('');
 
   useEffect(() => {
     const fetchTrips = async () => {
@@ -108,6 +110,17 @@ export default function Dashboard() {
       .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
       .slice(0, 3);
   }, [trips]);
+
+  const filteredRecentTrips = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return recentTrips;
+    return recentTrips.filter((trip) => {
+      return (
+        String(trip.name || '').toLowerCase().includes(q) ||
+        String(trip.destination || '').toLowerCase().includes(q)
+      );
+    });
+  }, [recentTrips, query]);
 
   return (
     <div className='page-in space-y-6'>
@@ -146,9 +159,20 @@ export default function Dashboard() {
       </section>
 
       <section>
-        <div className='mb-3 flex items-center justify-between'>
+        <div className='mb-3 flex flex-wrap items-center justify-between gap-3'>
           <h3 className='font-sora text-lg font-semibold text-[#0F172A]'>My Recent Trips</h3>
-          <button onClick={() => navigate('/trips')} className='text-sm font-medium text-[#0D9488] hover:text-[#0F766E]'>View All</button>
+          <div className='flex items-center gap-3'>
+            <label className='flex min-w-[240px] items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2'>
+              <Search size={15} className='text-slate-500' />
+              <input
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder='Search recent trips'
+                className='w-full bg-transparent text-sm outline-none'
+              />
+            </label>
+            <button onClick={() => navigate('/trips')} className='text-sm font-medium text-[#0D9488] hover:text-[#0F766E]'>View All</button>
+          </div>
         </div>
 
         {loading ? (
@@ -157,11 +181,13 @@ export default function Dashboard() {
               <div key={key} className='h-[280px] animate-pulse rounded-2xl border border-slate-200 bg-white' />
             ))}
           </div>
+        ) : filteredRecentTrips.length === 0 ? (
+          <div className='rounded-2xl border border-slate-200 bg-white p-8 text-center text-slate-500'>No trips match your search.</div>
         ) : recentTrips.length === 0 ? (
           <div className='rounded-2xl border border-slate-200 bg-white p-8 text-center text-slate-500'>No trips yet.</div>
         ) : (
           <div className='grid gap-4 md:grid-cols-2 xl:grid-cols-3'>
-            {recentTrips.map((trip) => (
+            {filteredRecentTrips.map((trip) => (
               <article key={trip.id} className='trip-card'>
                 <div className='overflow-hidden rounded-t-xl'>
                   <img src={trip.coverImage} alt={trip.destination} style={{ width: '100%', height: '140px', objectFit: 'cover', borderRadius: '12px 12px 0 0' }} />
