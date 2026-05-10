@@ -128,12 +128,12 @@ export default function Dashboard() {
         <img src={heroImage} alt='Travel hero' className='h-full w-full object-cover' />
         <div className='absolute inset-0 bg-gradient-to-r from-slate-900/70 via-teal-900/60 to-transparent' />
         <div className='absolute inset-0 backdrop-blur-sm' />
-        <div className='relative z-10 flex h-[280px] flex-col justify-center p-8 md:p-12'>
-          <h2 className='font-sora text-4xl font-bold text-white md:text-5xl'>Plan your next adventure</h2>
-          <p className='mt-3 max-w-lg text-base text-slate-100'>Build smarter trips with budget tracking, itineraries, and notes in one flow.</p>
+        <div className='relative z-10 flex h-[180px] flex-col justify-center p-5 md:p-8'>
+          <h2 className='font-sora text-3xl font-bold text-white md:text-4xl'>Plan your next adventure</h2>
+          <p className='mt-2 max-w-lg text-sm text-slate-100'>Build smarter trips with budget tracking, itineraries, and notes in one flow.</p>
           <button
             onClick={() => navigate('/trips/create')}
-            className='btn-primary mt-6 w-fit shadow-lg shadow-teal-500/40'
+            className='btn-primary mt-4 w-fit shadow-lg shadow-teal-500/40'
           >
             Plan a New Trip
           </button>
