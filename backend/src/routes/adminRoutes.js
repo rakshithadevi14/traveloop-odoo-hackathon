@@ -1,6 +1,7 @@
 import express from "express";
 import {
   getAllUsers,
+  updateUserStatus,
   deleteUser,
   getAllTrips,
   deleteTrip,
@@ -13,6 +14,7 @@ const router = express.Router();
 router.use(protect, adminOnly);
 
 router.get("/users", getAllUsers);
+router.patch("/users/:id/status", updateUserStatus);
 router.delete("/users/:id", deleteUser);
 
 router.get("/trips", getAllTrips);

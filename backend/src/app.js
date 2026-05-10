@@ -3,6 +3,8 @@ import express from "express";
 import cors from "cors";
 import authRoutes from "./routes/authRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
+import tripRoutes from "./routes/tripRoutes.js";
+import communityRoutes from "./routes/communityRoutes.js";
 import errorHandler from "./middleware/errorHandler.js";
 
 dotenv.config();
@@ -23,6 +25,13 @@ apiRouter.get("/health", (req, res) => {
 app.use("/api/v1", apiRouter);
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/admin", adminRoutes);
+app.use("/api/v1/trips", tripRoutes);
+app.use("/api/v1/community", communityRoutes);
+app.use("/api", apiRouter);
+app.use("/api/auth", authRoutes);
+app.use("/api/admin", adminRoutes);
+app.use("/api/trips", tripRoutes);
+app.use("/api/community", communityRoutes);
 
 app.use((req, res, next) => {
   const error = new Error(`Route not found: ${req.originalUrl}`);
