@@ -1,31 +1,31 @@
-const jwt = require('jsonwebtoken');
-const User = require('../models/User');
-const asyncHandler = require('../utils/asyncHandler');
+import jwt from "jsonwebtoken";
+import User from "../models/User.js";
+import asyncHandler from "../utils/asyncHandler.js";
 
 const protect = asyncHandler(async (req, res, next) => {
-  const authHeader = req.headers.authorization || '';
+  const authHeader = req.headers.authorization || "";
 
-  if (!authHeader.startsWith('Bearer ')) {
-    const error = new Error('Not authorized: token missing');
+  if (!authHeader.startsWith("Bearer ")) {
+    const error = new Error("Not authorized: token missing");
     error.statusCode = 401;
     throw error;
   }
 
-  const token = authHeader.split(' ')[1];
+  const token = authHeader.split(" ")[1];
 
   let decoded;
   try {
     decoded = jwt.verify(token, process.env.JWT_SECRET);
   } catch (err) {
-    const error = new Error('Not authorized: invalid or expired token');
+    const error = new Error("Not authorized: invalid or expired token");
     error.statusCode = 401;
     throw error;
   }
 
-  const user = await User.findById(decoded.id).select('-password');
+  const user = await User.findById(decoded.id).select("-password");
 
   if (!user) {
-    const error = new Error('Not authorized: user no longer exists');
+    const error = new Error("Not authorized: user no longer exists");
     error.statusCode = 401;
     throw error;
   }
@@ -35,8 +35,8 @@ const protect = asyncHandler(async (req, res, next) => {
 });
 
 const adminOnly = (req, res, next) => {
-  if (!req.user || req.user.role !== 'admin') {
-    const error = new Error('Forbidden: admin access required');
+  if (!req.user || req.user.role !== "admin") {
+    const error = new Error("Forbidden: admin access required");
     error.statusCode = 403;
     return next(error);
   }
@@ -44,7 +44,7 @@ const adminOnly = (req, res, next) => {
   return next();
 };
 
-module.exports = {
+export {
   protect,
   adminOnly,
 };
