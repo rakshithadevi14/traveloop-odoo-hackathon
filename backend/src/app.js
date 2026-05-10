@@ -2,6 +2,8 @@ import dotenv from "dotenv";
 import express from "express";
 import cors from "cors";
 import authRoutes from "./routes/authRoutes.js";
+import adminRoutes from "./routes/adminRoutes.js";
+import errorHandler from "./middleware/errorHandler.js";
 
 dotenv.config();
 
@@ -20,6 +22,7 @@ apiRouter.get("/health", (req, res) => {
 });
 app.use("/api/v1", apiRouter);
 app.use("/api/v1/auth", authRoutes);
+app.use("/api/v1/admin", adminRoutes);
 
 app.use((req, res, next) => {
   const error = new Error(`Route not found: ${req.originalUrl}`);
@@ -27,14 +30,6 @@ app.use((req, res, next) => {
   next(error);
 });
 
-app.use((error, req, res, next) => {
-  const statusCode = error.statusCode || 500;
-
-  res.status(statusCode).json({
-    success: false,
-    message: error.message || "Internal Server Error",
-    ...(process.env.NODE_ENV !== "production" && { stack: error.stack }),
-  });
-});
+app.use(errorHandler);
 
 export default app;
