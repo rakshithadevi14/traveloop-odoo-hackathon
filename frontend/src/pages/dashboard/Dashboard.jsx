@@ -123,16 +123,17 @@ export default function Dashboard() {
   }, [recentTrips, query]);
 
   return (
-    <div className='page-in space-y-6'>
-      <section className='relative h-[220px] overflow-hidden rounded-2xl'>
+    <div className='page-in space-y-8'>
+      <section className='relative overflow-hidden rounded-2xl shadow-lg'>
         <img src={heroImage} alt='Travel hero' className='h-full w-full object-cover' />
-        <div className='absolute inset-0 bg-[linear-gradient(135deg,rgba(15,23,42,0.85),rgba(13,148,136,0.7))]' />
-        <div className='relative z-10 flex h-full flex-col justify-center p-6 md:p-8'>
-          <h2 className='font-sora text-3xl font-bold text-white'>Plan your next adventure</h2>
-          <p className='mt-2 max-w-xl text-sm text-slate-200'>Build smarter trips with budget tracking, itineraries, and notes in one flow.</p>
+        <div className='absolute inset-0 bg-gradient-to-r from-slate-900/70 via-teal-900/60 to-transparent' />
+        <div className='absolute inset-0 backdrop-blur-sm' />
+        <div className='relative z-10 flex h-[280px] flex-col justify-center p-8 md:p-12'>
+          <h2 className='font-sora text-4xl font-bold text-white md:text-5xl'>Plan your next adventure</h2>
+          <p className='mt-3 max-w-lg text-base text-slate-100'>Build smarter trips with budget tracking, itineraries, and notes in one flow.</p>
           <button
             onClick={() => navigate('/trips/create')}
-            className='mt-4 w-fit rounded-xl bg-[#0D9488] px-5 py-2 text-sm font-medium text-white transition hover:bg-[#0F766E]'
+            className='btn-primary mt-6 w-fit shadow-lg shadow-teal-500/40'
           >
             Plan a New Trip
           </button>
@@ -140,65 +141,81 @@ export default function Dashboard() {
       </section>
 
       <section>
-        <h3 className='mb-3 font-sora text-lg font-semibold text-[#0F172A]'>Top Regional Picks</h3>
-        <div className='flex gap-4 overflow-x-auto pb-2'>
+        <div className='mb-5'>
+          <h3 className='section-header'>✈️ Top Regional Picks</h3>
+          <p className='section-subtitle mt-1'>Explore destinations loved by travelers</p>
+        </div>
+        <div className='carousel flex gap-4 overflow-x-auto pb-3'>
           {regionalPicks.map((pick) => (
             <button
               key={pick.city}
               onClick={() => navigate('/trips/create', { state: { destination: pick.city } })}
-              className='min-w-[230px] rounded-2xl border border-slate-200 bg-white p-3 text-left shadow-md transition hover:-translate-y-1 hover:shadow-lg'
+              className='regional-pick group p-0'
             >
-              <div className='overflow-hidden rounded-xl'>
-                <img src={pick.image} alt={pick.city} style={{ width: '100%', height: '160px', objectFit: 'cover', borderRadius: '12px 12px 0 0' }} />
+              <div className='relative overflow-hidden'>
+                <img src={pick.image} alt={pick.city} className='h-[180px] w-[240px] object-cover transition-transform duration-300 group-hover:scale-110' />
               </div>
-              <p className='mt-2 font-sora text-[15px] font-semibold text-slate-900'>{pick.city}</p>
-              <p className='text-xs text-slate-500'>{pick.country}</p>
+              <div className='p-4'>
+                <p className='font-sora text-[16px] font-semibold text-slate-900'>{pick.city}</p>
+                <p className='text-sm text-slate-500'>{pick.country}</p>
+              </div>
             </button>
           ))}
         </div>
       </section>
 
       <section>
-        <div className='mb-3 flex flex-wrap items-center justify-between gap-3'>
-          <h3 className='font-sora text-lg font-semibold text-[#0F172A]'>My Recent Trips</h3>
-          <div className='flex items-center gap-3'>
-            <label className='flex min-w-[240px] items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2'>
-              <Search size={15} className='text-slate-500' />
+        <div className='mb-6 flex flex-wrap items-center justify-between gap-4'>
+          <div>
+            <h3 className='section-header'>📍 My Recent Trips</h3>
+            <p className='section-subtitle mt-1'>Your travel history at a glance</p>
+          </div>
+          <div className='flex flex-wrap items-center gap-3'>
+            <label className='flex items-center gap-2 rounded-xl border border-slate-300 bg-white px-4 py-2 shadow-sm focus-within:ring-2 focus-within:ring-teal-500 focus-within:ring-offset-0'>
+              <Search size={16} className='text-slate-400' />
               <input
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder='Search recent trips'
-                className='w-full bg-transparent text-sm outline-none'
+                placeholder='Search trips...'
+                className='w-full bg-transparent text-sm outline-none placeholder-slate-400'
               />
             </label>
-            <button onClick={() => navigate('/trips')} className='text-sm font-medium text-[#0D9488] hover:text-[#0F766E]'>View All</button>
+            <button onClick={() => navigate('/trips')} className='text-sm font-semibold text-teal-600 hover:text-teal-700 hover:underline'>View All →</button>
           </div>
         </div>
 
         {loading ? (
-          <div className='grid gap-4 md:grid-cols-2 xl:grid-cols-3'>
+          <div className='grid gap-5 md:grid-cols-2 xl:grid-cols-3'>
             {[1, 2, 3].map((key) => (
-              <div key={key} className='h-[280px] animate-pulse rounded-2xl border border-slate-200 bg-white' />
+              <div key={key} className='h-[320px] animate-pulse rounded-2xl border border-slate-200 bg-white' />
             ))}
           </div>
         ) : filteredRecentTrips.length === 0 ? (
-          <div className='rounded-2xl border border-slate-200 bg-white p-8 text-center text-slate-500'>No trips match your search.</div>
+          <div className='rounded-2xl border border-slate-200 bg-gradient-to-br from-slate-50 to-slate-100 p-12 text-center'>
+            <p className='text-slate-600'>No trips match your search.</p>
+          </div>
         ) : recentTrips.length === 0 ? (
-          <div className='rounded-2xl border border-slate-200 bg-white p-8 text-center text-slate-500'>No trips yet.</div>
+          <div className='rounded-2xl border border-slate-200 bg-gradient-to-br from-slate-50 to-slate-100 p-12 text-center'>
+            <p className='mb-4 text-slate-600'>No trips yet. Start planning your adventure! 🚀</p>
+            <button onClick={() => navigate('/trips/create')} className='btn-primary'>Create Your First Trip</button>
+          </div>
         ) : (
-          <div className='grid gap-4 md:grid-cols-2 xl:grid-cols-3'>
+          <div className='grid gap-5 md:grid-cols-2 xl:grid-cols-3'>
             {filteredRecentTrips.map((trip) => (
-              <article key={trip.id} className='trip-card'>
-                <div className='overflow-hidden rounded-t-xl'>
-                  <img src={trip.coverImage} alt={trip.destination} style={{ width: '100%', height: '140px', objectFit: 'cover', borderRadius: '12px 12px 0 0' }} />
+              <article key={trip.id} className='trip-card overflow-hidden'>
+                <div className='relative overflow-hidden bg-slate-200'>
+                  <img src={trip.coverImage} alt={trip.destination} className='h-[160px] w-full object-cover transition-transform duration-300 group-hover:scale-110' />
+                  <div className='absolute inset-0 bg-gradient-to-t from-black/10 to-transparent' />
                 </div>
-                <div className='p-4'>
-                  <h4 className='font-sora text-[15px] font-semibold text-slate-900'>{trip.name}</h4>
-                  <p className='text-[13px] text-slate-500'>{formatDates(trip.startDate, trip.endDate)}</p>
-                  <span className={`mt-2 inline-block rounded-full px-[10px] py-[2px] text-[12px] ${statusStyles[trip.status] || statusStyles.Upcoming}`}>
-                    {trip.status}
-                  </span>
-                  <button onClick={() => navigate(`/trips/${trip.id}`)} className='btn-secondary mt-3'>
+                <div className='flex flex-col p-5'>
+                  <h4 className='font-sora text-[16px] font-semibold text-slate-900'>{trip.name}</h4>
+                  <p className='text-[13px] text-slate-500 mt-1'>{formatDates(trip.startDate, trip.endDate)}</p>
+                  <div className='mt-3 flex items-center gap-2'>
+                    <span className={`inline-block rounded-full px-3 py-1 text-[11px] font-semibold ${statusStyles[trip.status] || statusStyles.Upcoming}`}>
+                      {trip.status}
+                    </span>
+                  </div>
+                  <button onClick={() => navigate(`/trips/${trip.id}`)} className='btn-secondary mt-4 w-full'>
                     View Trip
                   </button>
                 </div>
